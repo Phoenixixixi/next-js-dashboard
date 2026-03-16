@@ -119,7 +119,11 @@ export async function createInvoices(prevState: State, formData: FormData) {
 
 const UpdateInvoice = FormSchema.omit({ id: true, date: true })
 
-export async function updateInvoice(id: string, formData: FormData) {
+export async function updateInvoice(
+  id: string,
+  prevState: { message: string } | null,
+  formData: FormData
+) {
   const { customerId, amount, status } = UpdateInvoice.parse({
     customerId: formData.get('customerId'),
     amount: formData.get('amount'),
@@ -135,7 +139,7 @@ export async function updateInvoice(id: string, formData: FormData) {
     `
   } catch (err) {
     console.error(err)
-    return { message: 'Database Error Failed to Update Customers' }
+    return { message: 'failed to update customers data' }
   }
   revalidatePath('/dashboard/invoices')
   redirect('/dashboard/invoices')
@@ -146,7 +150,7 @@ export async function deleteById(id: string) {
     await sql`delete from invoices where id = ${id}`
   } catch (err) {
     console.error(err)
-    return { message: 'Database Error Failed to delete Customers' }
+    throw new Error('failed to delete data')
   }
   revalidatePath('/dashboard/invoices')
 }
